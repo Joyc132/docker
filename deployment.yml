@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: my-nginx-v1
+        image: joy132/ubuntu:subham-v1
         ports:
         - containerPort: 80

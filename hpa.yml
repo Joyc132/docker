@@ -1,37 +1,54 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myapp-deployment
+spec:
+  maxReplicas: 5
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: myapp-deployment
+  targetCPUUtilizationPercentage: 20
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: php-apache
+  name: myapp-deployment
+  labels:
+    app: myapp
+    type: front-end
 spec:
-  selector:
-    matchLabels:
-      run: php-apache
-  replicas: 1
   template:
     metadata:
+      name: myapp-pod
       labels:
-        run: php-apache
+        app: myapp
+        type: front-end
     spec:
       containers:
-      - name: php-apache
-        image: joy132/ubuntu:subham-v1
-        ports:
-        - containerPort: 80
-        resources:
-          limits:
-            cpu: 30m
-          requests:
-            cpu: 30m
+        - name: nginx-controller
+          image: joy132/ubuntu:subham-v1
+          resources:
+            limits:
+              cpu: "50m"
+            requests:
+              cpu: "50m"
+  selector:
+    matchLabels:
+      type: front-end
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: php-apache
-  labels:
-    run: php-apache
+  name: my-service
 spec:
-  ports:
-  - port: 80
   selector:
-    run: php-apache
-
+    app: myapp
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      nodePort: 31000

@@ -1,30 +1,30 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: nginx-deployment
+  name: myapp-deployment
 spec:
   maxReplicas: 5
   minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: nginx-deployment
+    name: myapp-deployment
   targetCPUUtilizationPercentage: 20
 
 ...
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: myapp-deployment
   labels:
-    app: nginx
+    app: myapp
     type: front-end
 spec:
   template:
     metadata:
-      name: nginx-pod
+      name: myapp-pod
       labels:
-        app: nginx
+        app: myapp
         type: front-end
     spec:
       containers:
@@ -45,7 +45,7 @@ metadata:
   name: my-service
 spec:
   selector:
-    app: nginx
+    app: myapp
   type: NodePort
   ports:
     - protocol: TCP
